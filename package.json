@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "tsup src/cli.ts --format esm --dts",
-    "aimc": "npx tsx src/cli.ts"
+    "aimc": "npx tsx src/cli.ts",
+    "export-skill": "npx tsx src/export-skill.ts"
   },
   "bin": {
     "aimc": "./dist/cli.js"
