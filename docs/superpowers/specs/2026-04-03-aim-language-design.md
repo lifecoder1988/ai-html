@@ -15,6 +15,8 @@ AIM is a markup language designed for AI-to-AI communication, compiled to HTML+C
 
 ## 1. Tag System
 
+**Namespace rule:** Tag codes and attribute codes live in **separate namespaces**. Tag codes appear in element position (start of expression, after `>`, `+`, `^`, `(`). Attribute codes appear only inside `[...]` brackets. Overlapping names (e.g., tag `h` = header, attr `h` = href) are intentional and unambiguous due to context.
+
 ### Single-character tags (high frequency)
 
 | Code | HTML    | Code | HTML     | Code | HTML     |
@@ -40,7 +42,19 @@ AIM is a markup language designed for AI-to-AI communication, compiled to HTML+C
 | `br` | br          | `la` | label       | `op` | option      |
 | `fs` | fieldset    | `if` | iframe      | `sv` | svg         |
 | `cn` | canvas      | `pt` | path        | `og` | optgroup    |
-| `fc` | figcaption  | `lg` | legend      |      |             |
+| `fc` | figcaption  | `lg` | legend      | `tb` | tbody       |
+| `tt` | thead       | `tf` | tfoot       | `cp` | caption     |
+| `cg` | colgroup    | `co` | col         |      |             |
+
+### Document-level tags
+
+The compiler auto-wraps output in `<!DOCTYPE html><html><head>...</head><body>...</body></html>`. Document-level tags can be explicitly used when needed:
+
+| Code | HTML   | Code | HTML   | Code | HTML   |
+|------|--------|------|--------|------|--------|
+| `ht` | html   | `hd` | head   | `bd` | body   |
+| `ti` | title  | `mt` | meta   | `lk` | link   |
+| `js` | script | `sy` | style  |      |        |
 
 ---
 
@@ -78,7 +92,7 @@ Compiles to: `<a id="main" class="active" href="/page" target="_blank">Click</a>
 | `tg` | target      | `ac` | action      | `mt` | method      |
 | `r`  | required    | `di` | disabled    | `ck` | checked     |
 | `mn` | min         | `mx` | max         | `ro` | readonly    |
-| `@X` | data-X      |      |             |      |             |
+| `@X` | data-X      | `!X` | aria-X      | `rl` | role        |
 
 Boolean attributes are written without a value: `i[t=checkbox;ck;r]` → `<input type="checkbox" checked required>`
 
@@ -88,6 +102,8 @@ Boolean attributes are written without a value: `i[t=checkbox;ck;r]` → `<input
 
 - Short text: double quotes `"Hello World"`
 - Escaped quotes: backslash `"He said \"hi\""`
+- Escaped backslash: `"path\\to\\file"`
+- All other characters inside `"..."` are literal (including `>`, `+`, `(`, `)` etc.)
 
 ---
 
@@ -141,7 +157,9 @@ d.F.Ac.Jb.P4.myclass
 | `W1`       | width:100%        | `W2`       | width:50%          |
 | `Wf`       | width:fit-content | `Ws`       | width:100vw        |
 | `H1`       | height:100%       | `Hs`       | height:100vh       |
-| `Mw`+value | max-width         | `Mh`+value | max-height         |
+| `Xw`+value | max-width         | `Xh`+value | max-height         |
+
+Value syntax: bare number = px (`Xw800` → max-width:800px), `p` suffix = % (`Xw50p` → max-width:50%), `r` suffix = rem (`Xw5r` → max-width:5rem).
 
 #### Typography
 
@@ -171,10 +189,12 @@ d.F.Ac.Jb.P4.myclass
 
 #### Positioning
 
+Uses `Q` prefix to avoid collision with Padding (`P`):
+
 | Code     | CSS                | Code     | CSS                |
 |----------|--------------------|----------|--------------------|
-| `Pr`     | position:relative  | `Pa`     | position:absolute  |
-| `Pf`     | position:fixed     | `Ps`     | position:sticky    |
+| `Qr`     | position:relative  | `Qa`     | position:absolute  |
+| `Qf`     | position:fixed     | `Qs`     | position:sticky    |
 | `Z1`-`Z50` | z-index         |          |                    |
 
 #### Misc
@@ -187,9 +207,25 @@ d.F.Ac.Jb.P4.myclass
 
 #### Gap
 
-| Code       | CSS               |
-|------------|-------------------|
-| `G2`-`G16` | gap: N×0.25rem    |
+Uses `Gp` prefix to avoid collision with Grid (`G`):
+
+| Code        | CSS               |
+|-------------|-------------------|
+| `Gp2`-`Gp16` | gap: N×0.25rem  |
+
+#### Pseudo-classes
+
+Use `:` modifier after atomic codes or in raw CSS blocks. The compiler generates a `<style>` tag with scoped class names:
+
+| Syntax | Meaning |
+|--------|---------|
+| `d.Bg#fff:h{Bg#eee}` | background #fff, on hover #eee |
+| `a.C#00f:h{C#f00}` | color blue, on hover red |
+| `i.B1:f{B2.Bc#00f}` | border 1px, on focus border 2px blue |
+
+Supported pseudo-classes: `:h` (hover), `:f` (focus), `:a` (active), `:v` (visited), `:fc` (first-child), `:lc` (last-child).
+
+For pseudo-elements and media queries, use raw CSS escape blocks.
 
 #### Raw CSS escape
 
@@ -211,7 +247,7 @@ d{transition:all .3s;backdrop-filter:blur(10px)}
 | `%K`   | W1 + Br4 + Sh + P4                               | Card                 |
 | `%B`   | Dib + P2 + Px4 + Bg#3b82f6 + C#fff + Br2 + Cu   | Button               |
 | `%I`   | W1 + P2 + B1 + Bc#ccc + Br2                      | Input field          |
-| `%O`   | Pa + W1 + H1                                     | Overlay              |
+| `%O`   | Qa + W1 + H1                                     | Overlay              |
 | `%T`   | Tn + C#inherit                                   | Unstyled link        |
 
 Macros can be combined with atomic codes; atoms override macro defaults:
@@ -297,7 +333,7 @@ Traverse the AST, expand atomic codes and macros via lookup tables into inline `
 ### AIM source (~520 chars, ~180 tokens)
 
 ```
-d.%Col.Hs>(n.%R.P4.Bg#1a1a2e>(a[h=/]"Logo"+d.F.G4>(a[h=/about]"About"+a[h=/work]"Work"+a[h=/contact]"Contact"))+mn.F1.P8>(sc.%Col.G6.Mw800.Ma>(h1.T2x.Tb"Welcome"+p.Tl.C#666"Build faster with AIM"+d.F.G4>(a[h=#].%B"Get Started"+a[h=#].%B.Bg#fff.C#333.B1"Learn More"))+sc.Gc3.G6.My8>(d.%K>(h3.Tb"Fast"+p.Ts"80% fewer tokens")+d.%K>(h3.Tb"Simple"+p.Ts"Emmet-based syntax")+d.%K>(h3.Tb"Complete"+p.Ts"Full HTML coverage")))+ft.%R.P4.Bg#1a1a2e.C#fff>(p.Ts"© 2026 AIM"+d.F.G4>(a[h=#].%T.C#fff"Twitter"+a[h=#].%T.C#fff"GitHub")))
+d.%Col.Hs>(n.%R.P4.Bg#1a1a2e>(a[h=/]"Logo"+d.F.Gp4>(a[h=/about]"About"+a[h=/work]"Work"+a[h=/contact]"Contact"))+mn.F1.P8>(sc.%Col.Gp6.Xw800.Ma>(h1.T2x.Tb"Welcome"+p.Tl.C#666"Build faster with AIM"+d.F.Gp4>(a[h=#].%B"Get Started"+a[h=#].%B.Bg#fff.C#333.B1"Learn More"))+sc.Gc3.Gp6.My8>(d.%K>(h3.Tb"Fast"+p.Ts"80% fewer tokens")+d.%K>(h3.Tb"Simple"+p.Ts"Emmet-based syntax")+d.%K>(h3.Tb"Complete"+p.Ts"Full HTML coverage")))+ft.%R.P4.Bg#1a1a2e.C#fff>(p.Ts"© 2026 AIM"+d.F.Gp4>(a[h=#].%T.C#fff"Twitter"+a[h=#].%T.C#fff"GitHub")))
 ```
 
 ### Equivalent HTML output (~2400 chars, ~750 tokens)
