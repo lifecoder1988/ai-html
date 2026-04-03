@@ -2,7 +2,7 @@
   "name": "ai-html",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/cli.js",
   "directories": {
     "doc": "docs"
   },
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@types/node": "^25.5.0",
     "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "vitest": "^4.1.2"
   }
