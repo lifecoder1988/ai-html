@@ -5,9 +5,9 @@ const STATIC: Map<string, string> = new Map([
   ["Fr", "flex-direction:row"], ["Fw", "flex-wrap:wrap"],
   ["F1", "flex:1"], ["Fs0", "flex-shrink:0"],
   ["G", "display:grid"],
-  ["Gc2", "grid-template-columns:repeat(2,1fr)"],
-  ["Gc3", "grid-template-columns:repeat(3,1fr)"],
-  ["Gc4", "grid-template-columns:repeat(4,1fr)"],
+  ["Gc2", "display:grid;grid-template-columns:repeat(2,1fr)"],
+  ["Gc3", "display:grid;grid-template-columns:repeat(3,1fr)"],
+  ["Gc4", "display:grid;grid-template-columns:repeat(4,1fr)"],
   ["Db", "display:block"], ["Di", "display:inline"],
   ["Dib", "display:inline-block"], ["Dn", "display:none"],
   // Alignment

@@ -85,7 +85,7 @@ describe("resolveAtom", () => {
     expect(resolveAtom("F")).toBe("display:flex");
     expect(resolveAtom("Fc")).toBe("flex-direction:column");
     expect(resolveAtom("G")).toBe("display:grid");
-    expect(resolveAtom("Gc3")).toBe("grid-template-columns:repeat(3,1fr)");
+    expect(resolveAtom("Gc3")).toBe("display:grid;grid-template-columns:repeat(3,1fr)");
     expect(resolveAtom("Dn")).toBe("display:none");
   });
 
