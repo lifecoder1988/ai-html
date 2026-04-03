@@ -116,11 +116,16 @@ export function resolveAtom(code: string): string | null {
     return `${prop}:${val}`;
   }
 
-  // Colors: C#hex or C + css keyword (2+ chars), Bg#hex or Bg + keyword, Bc# or Bc + keyword
-  const colorMatch = code.match(/^(C|Bg|Bc)(#[0-9a-fA-F]{3,8}|[a-z]{2,})$/);
+  // Colors: C#hex, C#keyword (e.g. C#inherit), or C + css keyword (2+ chars)
+  // Bg and Bc variants follow same pattern
+  const colorMatch = code.match(/^(C|Bg|Bc)(#[0-9a-fA-F]{3,8}|#[a-z]+|[a-z]{2,})$/);
   if (colorMatch) {
     const propMap: Record<string, string> = { C: "color", Bg: "background", Bc: "border-color" };
-    return `${propMap[colorMatch[1]]}:${colorMatch[2]}`;
+    // Strip leading # from keyword values (e.g. #inherit → inherit)
+    const val = colorMatch[2].startsWith("#") && !/^#[0-9a-fA-F]{3,8}$/.test(colorMatch[2])
+      ? colorMatch[2].slice(1)
+      : colorMatch[2];
+    return `${propMap[colorMatch[1]]}:${val}`;
   }
 
   return null;

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { TAG_MAP } from "../src/tables/tags.js";
 import { ATTR_MAP, BOOL_ATTRS } from "../src/tables/attrs.js";
 import { resolveAtom } from "../src/tables/atoms.js";
+import { MACRO_MAP } from "../src/tables/macros.js";
 
 describe("TAG_MAP", () => {
   it("maps single-char tags", () => {
@@ -151,5 +152,26 @@ describe("resolveAtom", () => {
 
   it("returns null for unknown atoms", () => {
     expect(resolveAtom("Zz")).toBeNull();
+  });
+});
+
+describe("MACRO_MAP", () => {
+  it("contains all macros", () => {
+    expect(MACRO_MAP.has("%C")).toBe(true);
+    expect(MACRO_MAP.has("%R")).toBe(true);
+    expect(MACRO_MAP.has("%Col")).toBe(true);
+    expect(MACRO_MAP.has("%K")).toBe(true);
+    expect(MACRO_MAP.has("%B")).toBe(true);
+    expect(MACRO_MAP.has("%I")).toBe(true);
+    expect(MACRO_MAP.has("%O")).toBe(true);
+    expect(MACRO_MAP.has("%T")).toBe(true);
+  });
+
+  it("expands %C to centered flex atoms", () => {
+    expect(MACRO_MAP.get("%C")).toEqual(["F", "Ac", "Jc"]);
+  });
+
+  it("expands %K to card atoms", () => {
+    expect(MACRO_MAP.get("%K")).toEqual(["W1", "Br4", "Sh", "P4"]);
   });
 });
