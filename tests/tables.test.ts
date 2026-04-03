@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { TAG_MAP } from "../src/tables/tags.js";
+import { ATTR_MAP, BOOL_ATTRS } from "../src/tables/attrs.js";
 
 describe("TAG_MAP", () => {
   it("maps single-char tags", () => {
@@ -47,5 +48,32 @@ describe("TAG_MAP", () => {
 
   it("returns undefined for unknown codes", () => {
     expect(TAG_MAP.get("zz")).toBeUndefined();
+  });
+});
+
+describe("ATTR_MAP", () => {
+  it("maps attribute shortcodes", () => {
+    expect(ATTR_MAP.get("h")).toBe("href");
+    expect(ATTR_MAP.get("s")).toBe("src");
+    expect(ATTR_MAP.get("t")).toBe("type");
+    expect(ATTR_MAP.get("n")).toBe("name");
+    expect(ATTR_MAP.get("v")).toBe("value");
+    expect(ATTR_MAP.get("p")).toBe("placeholder");
+    expect(ATTR_MAP.get("a")).toBe("alt");
+    expect(ATTR_MAP.get("tg")).toBe("target");
+    expect(ATTR_MAP.get("rl")).toBe("role");
+  });
+
+  it("treats unknown codes as literal attribute names", () => {
+    expect(ATTR_MAP.get("onclick")).toBeUndefined();
+  });
+});
+
+describe("BOOL_ATTRS", () => {
+  it("contains boolean attribute codes", () => {
+    expect(BOOL_ATTRS.has("r")).toBe(true);
+    expect(BOOL_ATTRS.has("di")).toBe(true);
+    expect(BOOL_ATTRS.has("ck")).toBe(true);
+    expect(BOOL_ATTRS.has("ro")).toBe(true);
   });
 });
