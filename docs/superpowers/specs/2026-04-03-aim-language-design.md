@@ -196,6 +196,10 @@ Uses `Q` prefix to avoid collision with Padding (`P`):
 | `Qr`     | position:relative  | `Qa`     | position:absolute  |
 | `Qf`     | position:fixed     | `Qs`     | position:sticky    |
 | `Z1`-`Z50` | z-index         |          |                    |
+| `T0`       | top:0            | `R0`     | right:0            |
+| `B0`       | bottom:0         | `L0`     | left:0             |
+
+Offset codes follow the same value syntax as sizing: bare number = px, `p` suffix = %, `r` suffix = rem (e.g., `T10` = top:10px, `L2r` = left:2rem).
 
 #### Misc
 
@@ -224,6 +228,8 @@ Use `:` modifier after atomic codes or in raw CSS blocks. The compiler generates
 | `i.B1:f{B2.Bc#00f}` | border 1px, on focus border 2px blue |
 
 Supported pseudo-classes: `:h` (hover), `:f` (focus), `:a` (active), `:v` (visited), `:fc` (first-child), `:lc` (last-child).
+
+**Disambiguation:** Pseudo-class blocks are always preceded by `:X` before `{`, e.g., `:h{...}`. Raw CSS escapes have `{` directly after the tag/atom with no `:` prefix. The parser checks for `:` to differentiate.
 
 For pseudo-elements and media queries, use raw CSS escape blocks.
 
